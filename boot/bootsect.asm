@@ -6,9 +6,17 @@
   mov bx, MSG_BL_START
   call print
 
+  call switch_to_pm
+
   jmp $ ; loop
 
 %include "boot/print.asm"
+%include "boot/gdt.asm"
+%include "boot/switch_pm.asm"
+
+[bits 32]
+BEGIN_PM:
+ jmp $
 
 MSG_BL_START db "Bootloader started.", 0
 
