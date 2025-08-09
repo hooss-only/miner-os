@@ -1,12 +1,12 @@
 [org 0x7c00]
-mov bx, msg
-call print
+  mov bx, MSG_BL_START
+  call print
 
 jmp $
 
 %include "boot/print.asm"
 
-msg db "Hello, World", 0
+MSG_BL_START db "Bootloader started.", 0
 
 times 510-($-$$) db 0
 dw 0xaa55
