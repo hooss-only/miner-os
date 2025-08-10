@@ -1,9 +1,9 @@
 ; read a disk from 2nd sector and load it to ES:BX
 ; DH for amount of sector
 ; DL for number of drive to read
-read_disk:
+load_disk:
   pusha
-  push dh
+  push dx
 
   mov ah, 2 ; disk read
 
@@ -21,8 +21,8 @@ read_disk:
 
   int 0x13 ; disk interrupt
   jc disk_error ; jmp when error
-  
-  pop dh
+
+  pop dx
   cmp al, dh ; al = sectors read, dh = sectors need to be read
   jne sector_error ; jmp when al != dh
 
@@ -32,6 +32,10 @@ read_disk:
 disk_error:
   mov bx, DISK_ERR
   call print
+  call print_nl
+  mov dh, ah
+  call print_hex
+
   jmp $
 
 sector_error:
