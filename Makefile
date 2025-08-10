@@ -15,15 +15,18 @@ all: miner-os.bin
 run: all
 	$(EMU) -fda miner-os.bin
 
-debug: all
+debug: miner-os.bin kernel.elf
 	$(EMU) -S -s -fda miner-os.bin -d guest_errors,int &
-	$(DBG) -ex "target remote :1234"
+	$(DBG) -ex "target remote :1234" -ex "symbol-file kernel.elf"
 
 miner-os.bin: boot/bootsect.bin kernel.bin
 	cat $^ > miner-os.bin
 
 kernel.bin: boot/kernel_entry.o $(OBJS)
 	i686-elf-ld -o $@ -Ttext 0x1000 $^ --oformat binary
+
+kernel.elf: boot/kernel_entry.o $(OBJS)
+	i686-elf-ld -o $@ -Ttext 0x1000 $^
 
 %.bin: %.asm
 	$(ASM) -f bin $< -o $@
