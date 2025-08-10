@@ -7,15 +7,12 @@ KERNEL_OFFSET equ 0x1000
   mov al, 3
   int 0x10 ; Clear
 
-  mov bx, MSG_BL_START
-  call print
-  call print_nl
-  
-  mov bx, MSG_KNL_LOAD
-  call print
-  call print_nl
-
   call load_kernel
+
+  mov ah, 0
+  mov al, 0x13
+  int 0x10 ; Clear, change to color pixel mode
+
   call switch_to_pm
 
   jmp $ ; loop
@@ -23,7 +20,6 @@ KERNEL_OFFSET equ 0x1000
 %include "boot/print.asm"
 %include "boot/print_hex.asm"
 %include "boot/disk.asm"
-%include "boot/32bits_print.asm"
 %include "boot/gdt.asm"
 %include "boot/switch_pm.asm"
 
@@ -42,8 +38,6 @@ load_kernel:
 
 [bits 32]
 BEGIN_PM:
-  mov ebx, MSG_PM_START
-  call print_pm
   call KERNEL_OFFSET
   jmp $
 
