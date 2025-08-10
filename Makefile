@@ -1,5 +1,5 @@
 ASM = nasm
-EMU = qemu-system-x86_64
+EMU = qemu-system-i386
 
 C_SOURCES = $(wildcard kernel/*.c)
 HEADERS = $(wildcard kernel/*.h)
@@ -8,10 +8,16 @@ OBJS = $(C_SOURCES:.c=.o)
 CC = i686-elf-gcc
 CFLAGS = -g
 
+DBG = pwndbg
+
 all: miner-os.bin
 
-run: miner-os.bin
-	$(EMU) -fda boot/bootsect.bin
+run: all
+	$(EMU) -fda miner-os.bin
+
+debug: all
+	$(EMU) -S -s -fda miner-os.bin -d guest_errors,int &
+	$(DBG) -ex "target remote :1234"
 
 miner-os.bin: boot/bootsect.bin kernel.bin
 	cat $^ > miner-os.bin
