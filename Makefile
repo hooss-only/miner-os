@@ -36,4 +36,4 @@ kernel.bin: boot/kernel_entry.o $(OBJS)
 
 clean:
 	rm -rf *.bin *.o
-	rm -rf boot/*.bin kernel/*.o drivers/*.o boot/*.o
+	rm -rf boot/*.bin kernel/*.o drivers/*.o boot/*.o cpu/*.o
