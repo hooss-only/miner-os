@@ -1,5 +1,5 @@
 #include "../drivers/screen.h"
 
 void kernel_main() {
-  clear(4);
+  clear_screen(0);
 }
