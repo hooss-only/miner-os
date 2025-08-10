@@ -38,5 +38,5 @@ kernel.elf: boot/kernel_entry.o $(OBJS)
 	nasm -f elf $< -o $@
 
 clean:
-	rm -rf *.bin *.o
+	rm -rf *.bin *.o *.elf
 	rm -rf boot/*.bin kernel/*.o drivers/*.o boot/*.o cpu/*.o
