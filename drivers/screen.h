@@ -5,4 +5,7 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
+int put_pixel_at(int x, int y, unsigned char color);
+void clear(unsigned char color);
+
 #endif
