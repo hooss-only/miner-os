@@ -1,8 +1,8 @@
 ASM = nasm
 EMU = qemu-system-i386
 
-C_SOURCES = $(wildcard kernel/*.c)
-HEADERS = $(wildcard kernel/*.h)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
 OBJS = $(C_SOURCES:.c=.o)
 
 CC = i686-elf-gcc
@@ -36,4 +36,4 @@ kernel.bin: boot/kernel_entry.o $(OBJS)
 
 clean:
 	rm -rf *.bin *.o
-	rm -rf boot/*.bin kernel/*.o
+	rm -rf boot/*.bin kernel/*.o drivers/*.o boot/*.o
