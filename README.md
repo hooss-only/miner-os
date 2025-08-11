@@ -1,5 +1,5 @@
 # MINER OS
-An operation system which is only designed for minesweeper game.
+A 32bits operation system which is only designed for minesweeper game.
 
 ## How to build
 What you need to build this project:
@@ -11,6 +11,19 @@ What you need to build this project:
 ```
 make
 ```
+
+When you want to run my OS on emulator, you can use `run` script.
+```
+make run
+```
+It needs `qemu` or `qemu-system-i386`.<br><br>
+
+
+When you need to debug my OS, you can use `debug` script.
+```
+make debug
+```
+It needs `pwndbg` to use. If you prefer `gdb`, you have to change `GDB` variable in the Makefile.
 
 ## Structure
 You can get more detail in each directory.
