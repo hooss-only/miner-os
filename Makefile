@@ -1,3 +1,5 @@
+PROJECT_NAME = miner-os
+
 ASM = nasm
 EMU = qemu-system-i386
 
@@ -10,13 +12,16 @@ CFLAGS = -g
 
 DBG = pwndbg
 
-all: miner-os.bin
+OUTPUT = $(PROJECT_NAME).bin
+
+all: $(OUTPUT)
 
 run: all
-	$(EMU) -fda miner-os.bin
+	$(EMU) -fda $(OUTPUT)
 
-debug: miner-os.bin kernel.elf
-	$(EMU) -S -s -fda miner-os.bin -d guest_errors,int &
+# Pause emulator and remote with pwndbg.
+debug: $(OUTPUT) kernel.elf
+	$(EMU) -S -s -fda $(OUTPUT) -d guest_errors,int &
 	$(DBG) -ex "target remote :1234" -ex "symbol-file kernel.elf"
 
 miner-os.bin: boot/bootsect.bin kernel.bin
@@ -25,6 +30,7 @@ miner-os.bin: boot/bootsect.bin kernel.bin
 kernel.bin: boot/kernel_entry.o $(OBJS)
 	i686-elf-ld -o $@ -Ttext 0x1000 $^ --oformat binary
 
+# Symbols for debuging
 kernel.elf: boot/kernel_entry.o $(OBJS)
 	i686-elf-ld -o $@ -Ttext 0x1000 $^
 
