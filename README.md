@@ -15,9 +15,9 @@ make
 
 ## Structure
 You can get more detail in each directory.
-- boot - Bootloader
-- cpu - CPU communication
-- drivers - Drivers
-- kernel - kernel main
+- Dir, boot - Bootloader
+- Dir, cpu - CPU communication
+- Dir, drivers - Drivers
+- Dir, kernel - kernel main
 - LICENSE - MIT License.
 - Makefile - Script for building this projects
