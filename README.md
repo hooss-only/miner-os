@@ -23,7 +23,7 @@ When you need to debug my OS, you can use `debug` script.
 ```
 make debug
 ```
-It needs `pwndbg` to use. If you prefer `gdb`, you have to change `GDB` variable in the Makefile.
+It needs `pwndbg` to use. If you prefer `gdb`, you have to change `DBG` variable in the Makefile.
 
 ## Structure
 You can get more detail in each directory.
