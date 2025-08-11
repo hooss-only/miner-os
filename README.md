@@ -6,7 +6,6 @@ What you need to build this project:
 - nasm
 - i686-elf-gcc
 - i686-elf-ld
-- qemu-system-i386
 - make
 
 ```
