@@ -12,7 +12,7 @@ What you need to build this project:
 make
 ```
 
-When you want to run my OS on emulator, you can use `run` script.
+<br>When you want to run my OS on emulator, you can use `run` script.
 ```
 make run
 ```
