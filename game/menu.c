@@ -4,6 +4,7 @@
 #include "../cpu/irq.h"
 #include "../drivers/screen.h"
 
+#define MENU_LENGTH 3
 int sel = 0;
 
 void draw_menu();
@@ -17,7 +18,7 @@ static void keyboard_handle(registers_t regs) {
   else if (scancode == ARROW_DOWN) sel++;
 
   if (sel < 0) sel = 0;
-  if (sel > 2) sel = 2;
+  if (sel >= MENU_LENGTH) sel = MENU_LENGTH - 1;
 
   draw_menu();
 }
@@ -31,7 +32,7 @@ void init_menu() {
 
 /* PRIVATE FUNCTIONS */
 
-const char* MENU[] = {
+const char* MENU[MENU_LENGTH] = {
   "EASY",
   "NORMAL",
   "HARD"
@@ -43,9 +44,9 @@ void draw_menu() {
   put_string_at(10, 20, LIGHT_GRAY, "A 32BITS OPERATING SYSTEM");
   put_string_at(10, 30, LIGHT_GRAY, "ONLY FOR MINESWEEPER GAME");
 
-  for (int i=0; i<3; i++) {
+  for (int i=0; i<MENU_LENGTH; i++) {
     char color = WHITE;
     if (sel == i) color = LIGHT_YELLOW;
-    put_string_at(15, 45+i*10, color, MENU[i]);
+    put_string_at(15, 45+i*10, color, (char*) MENU[i]);
   }
 }
