@@ -12,7 +12,15 @@ game_status_t game_status = { 0 };
 
 cell_t pane[MAX_HEIGHT][MAX_WIDTH] = { 0 };
 
+void init_pane();
+
 void draw_game();
+void draw_cursor();
+
+void move_cursor(unsigned char scancode);
+
+void open();
+void mark();
 
 #define ARROW_UP 0x48
 #define ARROW_DOWN 0x50
@@ -21,6 +29,53 @@ void draw_game();
 
 #define KEY_X 0x2D
 #define KEY_C 0x2E
+
+static void keyboard_handle(registers_t regs) {
+  unsigned char scancode = port_byte_in(0x60);
+  
+  move_cursor(scancode);
+
+  if (scancode == KEY_X) // mark
+    return;
+
+  if (scancode == KEY_C) // open
+    open();
+  
+  draw_game();
+}
+
+void init_game(unsigned int w, unsigned int h, unsigned int mines) {
+  game_status.w = w;
+  game_status.h = h;
+  game_status.mines = mines;
+
+  init_pane();
+
+  draw_game();
+
+  register_interrupt_handler(IRQ1, keyboard_handle);
+}
+
+void init_pane() {
+  game_status.pane_x = 10;
+  game_status.pane_y = 10;
+
+  for (int i=0; i<(int)game_status.h; i++) {
+    for (int j=0; j<(int)game_status.w; j++) {
+      pane[i][j].bomb_cnt = 0;
+      pane[i][j].is_bomb = 0;
+      pane[i][j].is_open = 0;
+    }
+  }
+}
+
+void draw_game() {
+  clear_screen(0);
+
+  draw_pane(pane, game_status);
+  
+  draw_cursor();
+}
 
 void move_cursor(unsigned char scancode) {
   switch (scancode) {
@@ -39,35 +94,6 @@ void move_cursor(unsigned char scancode) {
     game_status.sel_y = game_status.h-1;
 }
 
-static void keyboard_handle(registers_t regs) {
-  unsigned char scancode = port_byte_in(0x60);
-  
-  move_cursor(scancode);
-  
-  draw_game();
-}
-
-void init_game(unsigned int w, unsigned int h, unsigned int mines) {
-  game_status.w = w;
-  game_status.h = h;
-  game_status.mines = mines;
-
-  game_status.pane_x = 10;
-  game_status.pane_y = 10;
-
-  for (int i=0; i<(int)h; i++) {
-    for (int j=0; j<(int)w; j++) {
-      pane[i][j].bomb_cnt = 0;
-      pane[i][j].is_bomb = 0;
-      pane[i][j].is_open = 0;
-    }
-  }
-
-  draw_game();
-
-  register_interrupt_handler(IRQ1, keyboard_handle);
-}
-
 void draw_cursor() {
   int x = game_status.pane_x, y = game_status.pane_y;
   x += game_status.sel_x * CELL_SIZE;
@@ -75,10 +101,12 @@ void draw_cursor() {
   draw_rect(x, y, CELL_SIZE, CELL_SIZE, WHITE);
 }
 
-void draw_game() {
-  clear_screen(0);
+void open() {
+  cell_t* cell = &pane[game_status.sel_y][game_status.sel_x];
 
-  draw_pane(pane, game_status);
-  
-  draw_cursor();
+  if (cell->is_bomb) return;
+
+  if (cell->is_open) return;
+
+  cell->is_open = 1;
 }
