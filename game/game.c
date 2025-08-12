@@ -65,6 +65,7 @@ void init_pane() {
       pane[i][j].bomb_cnt = 0;
       pane[i][j].is_bomb = 0;
       pane[i][j].is_open = 0;
+      pane[i][j].is_marked = 0;
     }
   }
 }
