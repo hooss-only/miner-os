@@ -5,6 +5,8 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
+#define LIGHT_GRAY 7
+#define LIGHT_YELLOW 14
 #define WHITE 15
 
 int put_pixel_at(int x, int y, unsigned char color);
