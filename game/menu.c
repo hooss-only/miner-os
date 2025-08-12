@@ -32,21 +32,43 @@ void init_menu() {
 
 /* PRIVATE FUNCTIONS */
 
-const char* MENU[MENU_LENGTH] = {
-  "EASY   10 X 10 10 MINES",
-  "NORMAL 20 X 20 40 MINES",
-  "HARD   40 X 20 100 MINES"
+struct menu {
+  const char* name;
+  unsigned int w;
+  unsigned int h;
+  unsigned int mines;
+};
+
+const struct menu MENU[MENU_LENGTH] = {
+  {
+    .name = "EASY 10 MINES 10X10",
+    .w = 10,
+    .h = 10,
+    .mines = 10
+  },
+  {
+    .name = "NORMAL 20 MINES 20X20",
+    .w = 20,
+    .h = 20,
+    .mines = 40
+  },
+  {
+    .name = "HARD 100 MINES 40X20",
+    .w = 40,
+    .h = 20,
+    .mines = 100
+  }
 };
 
 void draw_menu() {
   clear_screen(0);
-  put_string_at(10, 10, WHITE, "MINER OS");
+  put_string_at(10, 10, WHITE, "MINER OS BY HOOSS_ONLY");
   put_string_at(10, 20, LIGHT_GRAY, "A 32BITS OPERATING SYSTEM");
   put_string_at(10, 30, LIGHT_GRAY, "ONLY FOR MINESWEEPER GAME");
 
   for (int i=0; i<MENU_LENGTH; i++) {
     char color = WHITE;
     if (sel == i) color = LIGHT_YELLOW;
-    put_string_at(15, 45+i*10, color, (char*) MENU[i]);
+    put_string_at(15, 45+i*10, color, (char*) MENU[i].name);
   }
 }
