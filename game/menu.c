@@ -33,9 +33,9 @@ void init_menu() {
 /* PRIVATE FUNCTIONS */
 
 const char* MENU[MENU_LENGTH] = {
-  "EASY",
-  "NORMAL",
-  "HARD"
+  "EASY   10 X 10 10 MINES",
+  "NORMAL 20 X 20 40 MINES",
+  "HARD   40 X 20 100 MINES"
 };
 
 void draw_menu() {
