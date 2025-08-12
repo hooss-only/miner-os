@@ -1,6 +1,9 @@
 #include "screen.h"
 
-char alphabet[3][7][7] = {
+#define FONT_WIDTH 7
+#define FONT_HEIGHT 7
+
+const char ALPHABET[3][FONT_WIDTH][FONT_HEIGHT] = {
   {
     {0, 1, 1, 0, 0, 0, 0},
     {1, 0, 0, 1, 0, 0, 0},
@@ -40,11 +43,21 @@ int put_pixel_at(int x, int y, unsigned char color) {
 }
 
 void put_char_at(int x, int y, unsigned char color, char c) {
-  for (int i=0; i<7; i++) {
-    for (int j=0; j<7; j++) {
-      if (!alphabet[c-'A'][j][i]) continue;
+  for (int i=0; i<FONT_HEIGHT; i++) {
+    for (int j=0; j<FONT_WIDTH; j++) {
+      if (!ALPHABET[c-'A'][j][i]) continue;
       put_pixel_at(x+i, y+j, color);
     }
+  }
+}
+
+void put_string_at(int x, int y, unsigned char color, char* str) {
+  int dx = 0;
+  char c;
+  while ((c = *str) != 0) {
+    str++;
+    dx += FONT_WIDTH;
+    put_char_at(x + dx, y, color, c);
   }
 }
 
