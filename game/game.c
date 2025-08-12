@@ -18,12 +18,17 @@ void draw_game();
 #define ARROW_DOWN 0x50
 #define ARROW_LEFT 0x4B
 #define ARROW_RIGHT 0x4D
-static void keyboard_handle(registers_t regs) {
-  unsigned char scancode = port_byte_in(0x60);
-  if (scancode == ARROW_UP) game_status.sel_y--;
-  else if (scancode == ARROW_DOWN) game_status.sel_y++;
-  else if (scancode == ARROW_LEFT) game_status.sel_x--;
-  else if (scancode == ARROW_RIGHT) game_status.sel_x++;
+
+#define KEY_X 0x2D
+#define KEY_C 0x2E
+
+void move_cursor(unsigned char scancode) {
+  switch (scancode) {
+    case ARROW_UP: game_status.sel_y--; break;
+    case ARROW_DOWN: game_status.sel_y++; break;
+    case ARROW_LEFT: game_status.sel_x--; break;
+    case ARROW_RIGHT: game_status.sel_x++; break;
+  }
 
   if (game_status.sel_x < 0) game_status.sel_x = 0;
   else if (game_status.sel_x >= game_status.w)
@@ -32,7 +37,13 @@ static void keyboard_handle(registers_t regs) {
   if (game_status.sel_y < 0) game_status.sel_y = 0;
   else if (game_status.sel_y >= game_status.h)
     game_status.sel_y = game_status.h-1;
+}
 
+static void keyboard_handle(registers_t regs) {
+  unsigned char scancode = port_byte_in(0x60);
+  
+  move_cursor(scancode);
+  
   draw_game();
 }
 
