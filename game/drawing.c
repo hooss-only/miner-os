@@ -14,6 +14,18 @@ const char CELL[CELL_SIZE][CELL_SIZE] = {
   {26, 20, 20, 20, 20, 20, 20, 20, 20, 20},
 };
 
+#define FLAG_WIDTH 5
+#define FLAG_HEIGHT 5
+const char FLAG[FLAG_WIDTH][FLAG_HEIGHT] = {
+  {0, 0, 4, 1, 0},
+  {0, 4, 4, 1, 0},
+  {4, 4, 4, 1, 0},
+  {0, 4, 4, 1, 0},
+  {0, 0, 4, 1, 0},
+};
+
+void draw_flag(int x, int y);
+
 void draw_pane(cell_t pane[][MAX_WIDTH], game_status_t game_status) {
   for (int i=0; i<(int)game_status.h; i++) {
     for (int j=0; j<(int)game_status.w; j++) {
@@ -24,6 +36,7 @@ void draw_pane(cell_t pane[][MAX_WIDTH], game_status_t game_status) {
       );
     }
   }
+  draw_flag(200, 200);
 }
 
 void draw_cell_at(int x, int y, cell_t cell) {
@@ -40,7 +53,20 @@ void draw_cell_at(int x, int y, cell_t cell) {
 
   char bomb_cnt_str[2] = { 0 };
   int_to_ascii(cell.bomb_cnt, bomb_cnt_str);
-  if (cell.is_open) put_char_at(x+3, y+2, WHITE, bomb_cnt_str[0]);
+  if (cell.is_open && cell.bomb_cnt != 0)
+    put_char_at(x+3, y+2, WHITE, bomb_cnt_str[0]);
+
+  if (cell.is_marked && !cell.is_open)
+    draw_flag(x+3, y);
+}
+
+void draw_flag(int x, int y) {
+  for (int i=0; i<FLAG_HEIGHT; i++) {
+    for (int j=0; j<FLAG_WIDTH; j++) {
+      if (FLAG[i][j] == 0) continue;
+      put_pixel_at(x+j, y+i, FLAG[i][j]);
+    }
+  }
 }
 
 void draw_rect(int x, int y, int w, int h, unsigned char color) {
