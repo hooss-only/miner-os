@@ -13,6 +13,12 @@ int put_pixel_at(int x, int y, unsigned char color) {
 void put_char_at(int x, int y, unsigned char color, char c) {
   for (int i=0; i<FONT_HEIGHT; i++) {
     for (int j=0; j<FONT_WIDTH; j++) {
+      if (c >= '0' && c <= '9') {
+        if (!NUMBER[c-'0'][j][i]) continue;
+        put_pixel_at(x+i, y+j, color);
+        continue;
+      }
+
       if (!ALPHABET[c-'A'][j][i]) continue;
       put_pixel_at(x+i, y+j, color);
     }

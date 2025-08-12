@@ -26,7 +26,7 @@ void draw_cell_at(int x, int y, cell_t cell) {
   for (int i=0; i<CELL_SIZE; i++) {
       for (int j=0; j<CELL_SIZE; j++) {
         put_pixel_at(x+i, y+j, CELL[j][i] - 3);
-        put_char_at(x+3, y+2, WHITE, 'A');
+        put_char_at(x+3, y+2, WHITE, '1');
       }
     }
 }

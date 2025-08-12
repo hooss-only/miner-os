@@ -6,6 +6,7 @@ void kernel_main() {
   clear_screen(0);
 
   put_string_at(10, 10, WHITE, "MINER OS");
+  put_string_at(10, 60, WHITE, "0123456789");
   
   cell_t cell = {
     .is_bomb = 0,
