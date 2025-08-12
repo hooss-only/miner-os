@@ -4,7 +4,7 @@
 #define FONT_WIDTH 7
 #define FONT_HEIGHT 7
 
-const char NUMBER[9][FONT_WIDTH][FONT_HEIGHT] = {
+const char NUMBER[10][FONT_WIDTH][FONT_HEIGHT] = {
   {
     {0, 1, 1, 0, 0, 0, 0},
     {1, 0, 0, 1, 0, 0, 0},
