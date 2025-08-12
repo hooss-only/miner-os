@@ -4,33 +4,10 @@
 #include "../cpu/irq.h"
 #include "../drivers/screen.h"
 
+#include "game.h"
+
 #define MENU_LENGTH 3
 int sel = 0;
-
-void draw_menu();
-
-#define ARROW_UP 0x48
-#define ARROW_DOWN 0x50
-static void keyboard_handle(registers_t regs) {
-  unsigned char scancode = port_byte_in(0x60);
-
-  if (scancode == ARROW_UP) sel--;
-  else if (scancode == ARROW_DOWN) sel++;
-
-  if (sel < 0) sel = 0;
-  if (sel >= MENU_LENGTH) sel = MENU_LENGTH - 1;
-
-  draw_menu();
-}
-
-/* PUBLIC FUNCTIONS */
-void init_menu() {
-  draw_menu();
-  
-  register_interrupt_handler(IRQ1, keyboard_handle);
-}
-
-/* PRIVATE FUNCTIONS */
 
 struct menu {
   const char* name;
@@ -60,6 +37,32 @@ const struct menu MENU[MENU_LENGTH] = {
   }
 };
 
+void draw_menu();
+
+#define ARROW_UP 0x48
+#define ARROW_DOWN 0x50
+#define ENTER 0x1C
+static void keyboard_handle(registers_t regs) {
+  unsigned char scancode = port_byte_in(0x60);
+
+  if (scancode == ARROW_UP) sel--;
+  else if (scancode == ARROW_DOWN) sel++;
+  else if (scancode == ENTER) init_game(MENU[sel].w, MENU[sel].h, MENU[sel].mines);
+
+  if (sel < 0) sel = 0;
+  if (sel >= MENU_LENGTH) sel = MENU_LENGTH - 1;
+
+  draw_menu();
+}
+
+/* PUBLIC FUNCTIONS */
+void init_menu() {
+  draw_menu();
+  
+  register_interrupt_handler(IRQ1, keyboard_handle);
+}
+
+/* PRIVATE FUNCTIONS */
 void draw_menu() {
   clear_screen(0);
   put_string_at(10, 10, WHITE, "MINER OS BY HOOSS_ONLY");
