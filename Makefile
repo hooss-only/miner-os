@@ -3,8 +3,8 @@ PROJECT_NAME = miner-os
 ASM = nasm
 EMU = qemu-system-i386
 
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c game/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h game/*.h)
 OBJS = $(C_SOURCES:.c=.o)
 
 CC = i686-elf-gcc
