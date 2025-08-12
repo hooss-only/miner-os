@@ -6,6 +6,7 @@
 #define SCREEN_HEIGHT 200
 
 int put_pixel_at(int x, int y, unsigned char color);
+void put_char_at(int x, int y, unsigned char color, char c);
 void clear_screen(unsigned char color);
 
 #endif
