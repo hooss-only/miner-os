@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "font.h"
+#include "../libc/memory.h"
 
 int put_pixel_at(int x, int y, unsigned char color) {
   if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) return -1;
@@ -11,16 +12,14 @@ int put_pixel_at(int x, int y, unsigned char color) {
 }
 
 void put_char_at(int x, int y, unsigned char color, char c) {
+  char font[FONT_WIDTH][FONT_HEIGHT] = { 0 };
+  if (c >= '0' && c <= '9') memory_copy((unsigned char*) &font, (unsigned char*) &NUMBER[c-'0'], FONT_WIDTH*FONT_HEIGHT);
+  else if (c >= 'A' && c <= 'Z') memory_copy((unsigned char*) &font, (unsigned char*) &ALPHABET[c-'A'], FONT_WIDTH*FONT_HEIGHT);
+  else return;
+
   for (int i=0; i<FONT_HEIGHT; i++) {
     for (int j=0; j<FONT_WIDTH; j++) {
-      if (c == ' ') continue;
-      if (c >= '0' && c <= '9') {
-        if (!NUMBER[c-'0'][j][i]) continue;
-        put_pixel_at(x+i, y+j, color);
-        continue;
-      }
-
-      if (!ALPHABET[c-'A'][j][i]) continue;
+      if (!font[j][i]) continue;
       put_pixel_at(x+i, y+j, color);
     }
   }
