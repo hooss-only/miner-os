@@ -3,12 +3,12 @@ PROJECT_NAME = miner-os
 ASM = nasm
 EMU = qemu-system-i386
 
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c game/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h game/*.h)
-OBJS = $(C_SOURCES:.c=.o)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c libc/*.c game/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h libc/*.h game/*.h)
+OBJS = $(C_SOURCES:.c=.o cpu/interrupt.o)
 
 CC = i686-elf-gcc
-CFLAGS = -g
+CFLAGS = -g -ffreestanding -m32 -Wall -Wextra -fno-exceptions
 
 DBG = pwndbg
 
@@ -38,7 +38,7 @@ kernel.elf: boot/kernel_entry.o $(OBJS)
 	$(ASM) -f bin $< -o $@
 
 %.o: %.c {HEADERS}
-	$(CC) $(CFLAGS) --ffreestanding -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 	
 %.o: %.asm
 	nasm -f elf $< -o $@
