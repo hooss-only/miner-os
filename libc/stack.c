@@ -5,7 +5,7 @@ void stack_point_init(stack_point_t* stack) {
 }
 
 void stack_point_push(stack_point_t* stack, int x, int y) {
-  if (stack->length == MAX_STACK_SIZE) return; 
+  if (stack->length == MAX_STACK_LENGTH) return; 
   stack->length++;
   stack->array[stack->length - 1].x = x;
   stack->array[stack->length - 1].y = y;
