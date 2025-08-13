@@ -66,7 +66,7 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   game_status.h = h;
   game_status.mines = mines;
 
-  set_random_seed(2);
+  set_random_seed(1);
 
   init_pane();
 
@@ -96,8 +96,8 @@ void install_bombs() {
   int x, y;
   while (s.length < (int) game_status.mines) {
     char same_pos = 0;
-    x = randint(0, game_status.w);
-    y = randint(0, game_status.h);
+    x = randint(0, game_status.w-1);
+    y = randint(0, game_status.h-1);
     for (int i=0; i<s.length; i++) {
       same_pos = 1;
       if (s.array[i].x == x && s.array[i].y == y) break;
@@ -205,6 +205,10 @@ void open_DFS(int x, int y) {
       nx = x+dx[i];
       ny = y+dy[i];
       if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
+      if (pane[ny][nx].bomb_cnt != 0) {
+        open(nx, ny);
+        continue;
+      }
       if (visited[ny][nx]) continue;
       stack_point_push(&s, nx, ny);
       visited[ny][nx] = 1;
