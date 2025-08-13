@@ -45,4 +45,4 @@ kernel.elf: boot/kernel_entry.o $(OBJS)
 
 clean:
 	rm -rf *.bin *.o *.elf
-	rm -rf boot/*.bin kernel/*.o drivers/*.o boot/*.o cpu/*.o
+	rm -rf boot/*.bin kernel/*.o drivers/*.o boot/*.o cpu/*.o libc/*.o game/*.o
