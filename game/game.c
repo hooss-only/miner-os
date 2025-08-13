@@ -12,6 +12,9 @@ game_status_t game_status = { 0 };
 
 cell_t pane[MAX_HEIGHT][MAX_WIDTH] = { 0 };
 
+const int dx[] = {0, 0, 1, 1, 1, -1, -1, -1};
+const int dy[] = {1, -1, 1, -1, 0, 1, -1, 0};
+
 void init_pane();
 
 void draw_game();
@@ -19,8 +22,12 @@ void draw_cursor();
 
 void move_cursor(unsigned char scancode);
 
-void open();
+void open(int x, int y);
 void mark();
+unsigned int near_bomb_cnt(int x, int y);
+unsigned int near_mark_cnt(int x, int y);
+
+void open_near(int x, int y);
 
 #define ARROW_UP 0x48
 #define ARROW_DOWN 0x50
@@ -39,7 +46,7 @@ static void keyboard_handle(registers_t regs) {
     return;
 
   if (scancode == KEY_C) // open
-    open();
+    open(game_status.sel_x, game_status.sel_y);
   
   draw_game();
 }
@@ -102,12 +109,59 @@ void draw_cursor() {
   draw_rect(x, y, CELL_SIZE, CELL_SIZE, WHITE);
 }
 
-void open() {
-  cell_t* cell = &pane[game_status.sel_y][game_status.sel_x];
+void open(int x, int y) {
+  cell_t* cell = &pane[y][x];
 
   if (cell->is_bomb) return;
 
-  if (cell->is_open) return;
+  if (cell->is_open && cell->bomb_cnt != 0) open_near(x, y);;
 
   cell->is_open = 1;
+}
+
+void open_near(int x, int y) {
+  cell_t* cell = &pane[y][x];
+
+  if (near_mark_cnt(x, y) == cell->bomb_cnt) {
+    int nx, ny;
+    for (int i=0; i<8; i++) {
+      nx = x + dx[i];
+      ny = y + dy[i];
+      pane[ny][nx].is_open = 1;
+    }
+  }
+}
+
+unsigned int near_bomb_cnt(int x, int y) {
+  unsigned int result = 0;
+  
+  int nx, ny;
+  cell_t* cell;
+  for (int i=0; i<8; i++) {
+    nx = x + dx[i];
+    ny = y + dy[i];
+    if (nx < 0 || nx >= game_status.w || ny < 0 || ny >= game_status.h) continue;
+    cell = &pane[ny][nx];
+
+    if (cell->is_bomb) result++;
+  }
+
+  return result;
+}
+
+unsigned int near_mark_cnt(int x, int y) {
+  unsigned int result = 0;
+  
+  int nx, ny;
+  cell_t* cell;
+  for (int i=0; i<8; i++) {
+    nx = x + dx[i];
+    ny = y + dy[i];
+    if (nx < 0 || nx >= game_status.w || ny < 0 || ny >= game_status.h) continue;
+    cell = &pane[ny][nx];
+
+    if (cell->is_marked) result++;
+  }
+
+  return result;
 }
