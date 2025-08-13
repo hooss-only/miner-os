@@ -1,8 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define MAX_WIDTH 100
-#define MAX_HEIGHT 100
+#define MAX_WIDTH 30
+#define MAX_HEIGHT 15
 
 typedef struct {
   unsigned int w;

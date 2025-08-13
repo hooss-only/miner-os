@@ -1,7 +1,10 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#define MAX_QUEUE_LENGTH 600
+#include "../game/game.h"
+
+#define MAX_QUEUE_LENGTH MAX_WIDTH * MAX_HEIGHT
+
 typedef struct {
   int x;
   int y;
