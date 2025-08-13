@@ -11,6 +11,6 @@ int randint(int min, int max) {
   return min + (random_seed % range);
 }
 
-void set_randome_seed(int seed) {
+void set_random_seed(int seed) {
   random_seed = seed;
 }

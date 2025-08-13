@@ -6,6 +6,7 @@
 #include "../cpu/ports.h"
 
 #include "../libc/stack.h"
+#include "../libc/math.h"
 
 #include "cell.h"
 #include "drawing.h"
@@ -13,12 +14,15 @@
 game_status_t game_status = { 0 };
 
 cell_t pane[MAX_HEIGHT][MAX_WIDTH] = { 0 };
+
 char visited[MAX_HEIGHT][MAX_WIDTH] = { 0 };
+stack_point_t s;
 
 const int dx[] = {0, 0, 1, 1, 1, -1, -1, -1};
 const int dy[] = {1, -1, 1, -1, 0, 1, -1, 0};
 
 void init_pane();
+void install_bombs();
 
 void reset_visited();
 
@@ -62,6 +66,8 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   game_status.h = h;
   game_status.mines = mines;
 
+  set_random_seed(2);
+
   init_pane();
 
   draw_game();
@@ -73,13 +79,38 @@ void init_pane() {
   game_status.pane_x = 10;
   game_status.pane_y = 10;
 
+  install_bombs();
+
   for (int i=0; i<(int)game_status.h; i++) {
     for (int j=0; j<(int)game_status.w; j++) {
-      pane[i][j].bomb_cnt = 0;
-      pane[i][j].is_bomb = 0;
+      pane[i][j].bomb_cnt = near_bomb_cnt(j, i);
       pane[i][j].is_open = 0;
       pane[i][j].is_marked = 0;
     }
+  }
+
+}
+
+void install_bombs() {
+  stack_point_init(&s);
+  int x, y;
+  while (s.length < (int) game_status.mines) {
+    char same_pos = 0;
+    x = randint(0, game_status.w);
+    y = randint(0, game_status.h);
+    for (int i=0; i<s.length; i++) {
+      same_pos = 1;
+      if (s.array[i].x == x && s.array[i].y == y) break;
+      same_pos = 0;
+    }
+
+    if (same_pos) continue;
+    stack_point_push(&s, x, y);
+  }
+
+  while (s.length) {
+    stack_point_pop(&s, &x, &y);
+    pane[y][x].is_bomb = 1;
   }
 }
 
@@ -155,7 +186,6 @@ void open_near(int x, int y) {
   }
 }
 
-stack_point_t s;
 void open_DFS(int x, int y) {
   cell_t* cell;
   stack_point_init(&s);
