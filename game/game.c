@@ -5,6 +5,8 @@
 #include "../cpu/irq.h"
 #include "../cpu/ports.h"
 
+#include "../libc/stack.h"
+
 #include "cell.h"
 #include "drawing.h"
 
@@ -31,7 +33,7 @@ unsigned int near_bomb_cnt(int x, int y);
 unsigned int near_mark_cnt(int x, int y);
 
 void open_near(int x, int y);
-void open_BFS(int x, int y);
+void open_DFS(int x, int y);
 
 #define ARROW_UP 0x48
 #define ARROW_DOWN 0x50
@@ -53,7 +55,6 @@ static void keyboard_handle(registers_t regs) {
     open(game_status.sel_x, game_status.sel_y);
   
   draw_game();
-  reset_visited();
 }
 
 void init_game(unsigned int w, unsigned int h, unsigned int mines) {
@@ -134,7 +135,7 @@ void open(int x, int y) {
 
   if (cell->is_open && cell->bomb_cnt != 0) open_near(x, y);
 
-  if (cell->bomb_cnt == 0) open_BFS(x, y);
+  if (cell->bomb_cnt == 0 && !cell->is_open) open_DFS(x, y);
 
   cell->is_open = 1;
 }
@@ -154,19 +155,31 @@ void open_near(int x, int y) {
   }
 }
 
-void open_BFS(int x, int y) {
-  cell_t* cell = &pane[y][x];
+stack_point_t s;
+void open_DFS(int x, int y) {
+  cell_t* cell;
+  stack_point_init(&s);
+  reset_visited();
 
-  if (near_mark_cnt(x, y) >= cell->bomb_cnt) {
-    int nx, ny;
+  visited[y][x] = 1;
+
+  stack_point_push(&s, x, y);
+  
+  int nx, ny;
+  while (s.length) {
+    stack_point_pop(&s, &x, &y);
+    cell = &pane[y][x];
+    cell->is_open = 1;
+    
     for (int i=0; i<8; i++) {
-      nx = x + dx[i];
-      ny = y + dy[i];
+      nx = x+dx[i];
+      ny = y+dy[i];
       if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
-      if (pane[ny][nx].is_marked) continue;
-      pane[ny][nx].is_open = 1;
+      if (visited[ny][nx]) continue;
+      stack_point_push(&s, nx, ny);
+      visited[ny][nx] = 1;
     }
-  }
+  };
 }
 
 unsigned int near_bomb_cnt(int x, int y) {
