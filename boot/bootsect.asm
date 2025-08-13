@@ -26,7 +26,7 @@ KERNEL_OFFSET equ 0x1000
 [bits 16]
 load_kernel:
   ; SIZE OF KERNEL
-  ; 0x40 = 64
+  ; 0x20 = 32
   ; 32 sectors = 16 KBs
   mov dh, 0x20
   mov bx, KERNEL_OFFSET
