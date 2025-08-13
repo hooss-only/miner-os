@@ -11,11 +11,14 @@
 game_status_t game_status = { 0 };
 
 cell_t pane[MAX_HEIGHT][MAX_WIDTH] = { 0 };
+char visited[MAX_HEIGHT][MAX_WIDTH] = { 0 };
 
 const int dx[] = {0, 0, 1, 1, 1, -1, -1, -1};
 const int dy[] = {1, -1, 1, -1, 0, 1, -1, 0};
 
 void init_pane();
+
+void reset_visited();
 
 void draw_game();
 void draw_cursor();
@@ -28,6 +31,7 @@ unsigned int near_bomb_cnt(int x, int y);
 unsigned int near_mark_cnt(int x, int y);
 
 void open_near(int x, int y);
+void open_BFS(int x, int y);
 
 #define ARROW_UP 0x48
 #define ARROW_DOWN 0x50
@@ -49,6 +53,7 @@ static void keyboard_handle(registers_t regs) {
     open(game_status.sel_x, game_status.sel_y);
   
   draw_game();
+  reset_visited();
 }
 
 void init_game(unsigned int w, unsigned int h, unsigned int mines) {
@@ -77,6 +82,14 @@ void init_pane() {
   }
 }
 
+void reset_visited() {
+  for (int i=0; i<(int)game_status.h; i++) {
+    for (int j=0; j<(int)game_status.w; j++) {
+      visited[i][j] = 0;
+    }
+  }
+}
+
 void draw_game() {
   clear_screen(0);
 
@@ -94,12 +107,12 @@ void move_cursor(unsigned char scancode) {
   }
 
   if (game_status.sel_x < 0) game_status.sel_x = 0;
-  else if (game_status.sel_x >= game_status.w)
-    game_status.sel_x = game_status.w-1;
+  else if (game_status.sel_x >= (int) game_status.w)
+    game_status.sel_x = (int) game_status.w-1;
 
   if (game_status.sel_y < 0) game_status.sel_y = 0;
-  else if (game_status.sel_y >= game_status.h)
-    game_status.sel_y = game_status.h-1;
+  else if (game_status.sel_y >= (int) game_status.h)
+    game_status.sel_y = (int) game_status.h-1;
 }
 
 void draw_cursor() {
@@ -117,11 +130,11 @@ void mark() {
 void open(int x, int y) {
   cell_t* cell = &pane[y][x];
 
-  if (cell->is_bomb) return;
+  if (cell->is_bomb) return; // game over
 
   if (cell->is_open && cell->bomb_cnt != 0) open_near(x, y);
 
-  if (cell->bomb_cnt == 0) open_near(x, y);
+  if (cell->bomb_cnt == 0) open_BFS(x, y);
 
   cell->is_open = 1;
 }
@@ -129,11 +142,28 @@ void open(int x, int y) {
 void open_near(int x, int y) {
   cell_t* cell = &pane[y][x];
 
-  if (near_mark_cnt(x, y) == cell->bomb_cnt) {
+  if (near_mark_cnt(x, y) >= cell->bomb_cnt) {
     int nx, ny;
     for (int i=0; i<8; i++) {
       nx = x + dx[i];
       ny = y + dy[i];
+      if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
+      if (pane[ny][nx].is_marked) continue;
+      open(nx, ny);
+    }
+  }
+}
+
+void open_BFS(int x, int y) {
+  cell_t* cell = &pane[y][x];
+
+  if (near_mark_cnt(x, y) >= cell->bomb_cnt) {
+    int nx, ny;
+    for (int i=0; i<8; i++) {
+      nx = x + dx[i];
+      ny = y + dy[i];
+      if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
+      if (pane[ny][nx].is_marked) continue;
       pane[ny][nx].is_open = 1;
     }
   }
@@ -147,7 +177,7 @@ unsigned int near_bomb_cnt(int x, int y) {
   for (int i=0; i<8; i++) {
     nx = x + dx[i];
     ny = y + dy[i];
-    if (nx < 0 || nx >= game_status.w || ny < 0 || ny >= game_status.h) continue;
+    if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
     cell = &pane[ny][nx];
 
     if (cell->is_bomb) result++;
@@ -164,7 +194,7 @@ unsigned int near_mark_cnt(int x, int y) {
   for (int i=0; i<8; i++) {
     nx = x + dx[i];
     ny = y + dy[i];
-    if (nx < 0 || nx >= game_status.w || ny < 0 || ny >= game_status.h) continue;
+    if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
     cell = &pane[ny][nx];
 
     if (cell->is_marked) result++;
