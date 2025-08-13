@@ -14,14 +14,16 @@ const char CELL[CELL_SIZE][CELL_SIZE] = {
   {26, 20, 20, 20, 20, 20, 20, 20, 20, 20},
 };
 
-#define FLAG_WIDTH 5
-#define FLAG_HEIGHT 5
-const char FLAG[FLAG_WIDTH][FLAG_HEIGHT] = {
-  {0, 0, 4, 1, 0},
-  {0, 4, 4, 1, 0},
-  {4, 4, 4, 1, 0},
-  {0, 4, 4, 1, 0},
-  {0, 0, 4, 1, 0},
+#define FLAG_WIDTH 6
+#define FLAG_HEIGHT 7
+const char FLAG[FLAG_HEIGHT][FLAG_WIDTH] = {
+  {0, 0, 4, WHITE, 0, 0},
+  {0, 4, 4, WHITE, 0, 0},
+  {4, 4, 4, WHITE, 0, 0},
+  {0, 4, 4, WHITE, 0, 0},
+  {0, 0, 4, WHITE, 0, 0},
+  {0, 0, 0, WHITE, 0, 0},
+  {WHITE, WHITE, WHITE, WHITE, WHITE, WHITE},
 };
 
 void draw_flag(int x, int y);
@@ -36,7 +38,6 @@ void draw_pane(cell_t pane[][MAX_WIDTH], game_status_t game_status) {
       );
     }
   }
-  draw_flag(200, 200);
 }
 
 void draw_cell_at(int x, int y, cell_t cell) {
@@ -57,7 +58,7 @@ void draw_cell_at(int x, int y, cell_t cell) {
     put_char_at(x+3, y+2, WHITE, bomb_cnt_str[0]);
 
   if (cell.is_marked && !cell.is_open)
-    draw_flag(x+3, y);
+    draw_flag(x+2, y+1);
 }
 
 void draw_flag(int x, int y) {

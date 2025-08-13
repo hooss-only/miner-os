@@ -43,7 +43,7 @@ static void keyboard_handle(registers_t regs) {
   move_cursor(scancode);
 
   if (scancode == KEY_X) // mark
-    return;
+    mark();
 
   if (scancode == KEY_C) // open
     open(game_status.sel_x, game_status.sel_y);
@@ -109,12 +109,18 @@ void draw_cursor() {
   draw_rect(x, y, CELL_SIZE, CELL_SIZE, WHITE);
 }
 
+void mark() {
+  pane[game_status.sel_y][game_status.sel_x].is_marked = !pane[game_status.sel_y][game_status.sel_x].is_marked;
+}
+
 void open(int x, int y) {
   cell_t* cell = &pane[y][x];
 
   if (cell->is_bomb) return;
 
-  if (cell->is_open && cell->bomb_cnt != 0) open_near(x, y);;
+  if (cell->is_open && cell->bomb_cnt != 0) open_near(x, y);
+
+  if (cell->bomb_cnt == 0) open_near(x, y);
 
   cell->is_open = 1;
 }
