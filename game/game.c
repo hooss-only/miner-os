@@ -109,6 +109,7 @@ void draw_cursor() {
   draw_rect(x, y, CELL_SIZE, CELL_SIZE, WHITE);
 }
 
+// toggle is_marked of cell at curosr.
 void mark() {
   pane[game_status.sel_y][game_status.sel_x].is_marked = !pane[game_status.sel_y][game_status.sel_x].is_marked;
 }
