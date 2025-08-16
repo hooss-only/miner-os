@@ -31,5 +31,6 @@ You can get more detail in each directory.
 - Dir, cpu - CPU communication
 - Dir, drivers - Drivers
 - Dir, kernel - kernel main
+- Dir, game - for game
 - LICENSE - MIT License.
 - Makefile - Script for building this projects
