@@ -4,6 +4,7 @@
 
 #include "../cpu/irq.h"
 #include "../cpu/ports.h"
+#include "../cpu/timer.h"
 
 #include "../libc/string.h"
 #include "../libc/stack.h"
@@ -67,8 +68,8 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   game_status.w = w;
   game_status.h = h;
   game_status.mines = mines;
-
-  set_random_seed(1);
+  
+  set_random_seed(get_tick());
 
   init_pane();
 
@@ -93,6 +94,7 @@ void init_pane() {
 
 }
 
+// TODO: Fix bomb is not enough
 void install_bombs() {
   stack_point_init(&s);
   int x, y;
