@@ -5,6 +5,7 @@
 #include "../cpu/irq.h"
 #include "../cpu/ports.h"
 
+#include "../libc/string.h"
 #include "../libc/stack.h"
 #include "../libc/math.h"
 
@@ -28,6 +29,7 @@ void reset_visited();
 
 void draw_game();
 void draw_cursor();
+void draw_ui();
 
 void move_cursor(unsigned char scancode);
 
@@ -99,9 +101,10 @@ void install_bombs() {
     x = randint(0, game_status.w-1);
     y = randint(0, game_status.h-1);
     for (int i=0; i<s.length; i++) {
-      same_pos = 1;
-      if (s.array[i].x == x && s.array[i].y == y) break;
-      same_pos = 0;
+      if (s.array[i].x == x && s.array[i].y == y) {
+        same_pos = 1;
+        break;
+      }
     }
 
     if (same_pos) continue;
@@ -126,6 +129,8 @@ void draw_game() {
   clear_screen(0);
 
   draw_pane(pane, game_status);
+
+  draw_ui();
   
   draw_cursor();
 }
@@ -152,6 +157,21 @@ void draw_cursor() {
   x += game_status.sel_x * CELL_SIZE;
   y += game_status.sel_y * CELL_SIZE;
   draw_rect(x, y, CELL_SIZE, CELL_SIZE, WHITE);
+}
+
+void draw_ui() {
+  int anchor_x = game_status.pane_x;
+  int anchor_y = game_status.pane_y + MAX_HEIGHT*CELL_SIZE + 5;
+
+  char bomb_amount[10] = { 0 };
+  
+  int_to_ascii(game_status.mines, bomb_amount);
+  put_string_at(
+      anchor_x,
+      anchor_y,
+      WHITE,
+      bomb_amount
+  );
 }
 
 // toggle is_marked of cell at curosr.

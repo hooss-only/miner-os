@@ -10,6 +10,8 @@ void int_to_ascii(int n, char str[]) {
 
   if (sign < 0) str[i++] = '-';
   str[i] = '\0';
+
+  reverse(str);
 }
 
 void reverse(char s[]) {
