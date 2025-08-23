@@ -1,7 +1,7 @@
 #include "logger.h"
 #include "../libc/memory.h"
 
-#define LOG_MAX_LINES SCREEN_HEIGHT / FONT_HEIGHT
+#define LOG_MAX_LINES SCREEN_HEIGHT / (FONT_HEIGHT + 2)
 log_t logs[LOG_MAX_LINES] = { 0 };
 char visible = 0;
 
@@ -37,7 +37,7 @@ void draw_log() {
       case LOG_WARNING: color = LIGHT_YELLOW; break;
       case LOG_ERROR:   color = RED; break;
     }
-    put_string_at(0, i*FONT_HEIGHT, color, logs[i].text);
+    put_string_at(0, i* (FONT_HEIGHT+2), color, logs[i].text);
   }
 }
 
