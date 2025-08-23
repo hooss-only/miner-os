@@ -205,6 +205,7 @@ void open(int x, int y) {
   cell->is_open = 1;
 }
 
+// TODO: game over when near is bomb
 void open_near(int x, int y) {
   cell_t* cell = &pane[y][x];
 
@@ -214,8 +215,10 @@ void open_near(int x, int y) {
       nx = x + dx[i];
       ny = y + dy[i];
       if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
+      if (pane[ny][nx].is_open) continue;
       if (pane[ny][nx].is_marked) continue;
-      open(nx, ny);
+      if (!pane[ny][nx].is_bomb && pane[ny][nx].bomb_cnt == 0) open_DFS(nx, ny);
+      pane[ny][nx].is_open = 1;
     }
   }
 }
