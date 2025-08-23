@@ -24,6 +24,8 @@ stack_point_t s;
 const int dx[] = {0, 0, 1, 1, 1, -1, -1, -1};
 const int dy[] = {1, -1, 1, -1, 0, 1, -1, 0};
 
+int marks = 0;
+
 void init_pane();
 void install_bombs();
 
@@ -73,6 +75,7 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   game_status.w = w;
   game_status.h = h;
   game_status.mines = mines;
+  marks = 0;
 
   init_logger();
   
@@ -184,13 +187,48 @@ void draw_ui() {
       anchor_x,
       anchor_y,
       WHITE,
-      bomb_amount
+      "ARROWS TO MOVE   X TO MARK   C TO OPEN"
+  );
+
+  put_string_at(
+      anchor_x,
+      anchor_y + 1 * (FONT_HEIGHT + 2),
+      WHITE,
+      "R TO RESTART"
+  );
+
+  char ascii_buf[10] = { 0 };
+  char remain_bombs_and_marks_made[50] = { 0 };
+
+  int_to_ascii(game_status.mines, ascii_buf);
+  append_str(remain_bombs_and_marks_made, ascii_buf);
+  append_str(remain_bombs_and_marks_made, " MINE");
+  if (game_status.mines > 1) append(remain_bombs_and_marks_made, 'S');
+  append_str(remain_bombs_and_marks_made, " REMAIN");
+  
+  if (marks > 0) {
+    append_str(remain_bombs_and_marks_made, " AND ");
+    int_to_ascii(marks, ascii_buf);
+    append_str(remain_bombs_and_marks_made, ascii_buf);
+    append_str(remain_bombs_and_marks_made, " MARK");
+    if (marks > 1) append(remain_bombs_and_marks_made, 'S');
+    append_str(remain_bombs_and_marks_made, " YOU MADE");
+  }
+
+  put_string_at(
+      anchor_x,
+      anchor_y + 2 * (FONT_HEIGHT + 2),
+      WHITE,
+      remain_bombs_and_marks_made
   );
 }
 
 // toggle is_marked of cell at curosr.
 void mark() {
-  pane[game_status.sel_y][game_status.sel_x].is_marked = !pane[game_status.sel_y][game_status.sel_x].is_marked;
+  char is_marked = !pane[game_status.sel_y][game_status.sel_x].is_marked;
+  pane[game_status.sel_y][game_status.sel_x].is_marked = is_marked;
+  if (is_marked) marks++;
+  else marks--;
 }
 
 void open(int x, int y) {

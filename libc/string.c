@@ -47,3 +47,9 @@ void append(char* str, char c) {
   str[l] = c;
   str[l+1] = 0;
 }
+
+void append_str(char* dest, char* str) {
+  for (int i=0; str[i] != 0; i++) {
+    append(dest, str[i]);
+  }
+}
