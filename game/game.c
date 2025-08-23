@@ -225,9 +225,10 @@ void draw_ui() {
 
 // toggle is_marked of cell at curosr.
 void mark() {
-  char is_marked = !pane[game_status.sel_y][game_status.sel_x].is_marked;
-  pane[game_status.sel_y][game_status.sel_x].is_marked = is_marked;
-  if (is_marked) marks++;
+  cell_t* cell = &pane[game_status.sel_y][game_status.sel_x];
+  if (cell->is_open) return;
+  cell->is_marked = !cell->is_marked;
+  if (cell->is_marked) marks++;
   else marks--;
 }
 
