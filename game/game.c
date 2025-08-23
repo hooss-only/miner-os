@@ -13,6 +13,7 @@
 #include "cell.h"
 #include "drawing.h"
 #include "logger.h"
+#include "menu.h"
 
 game_status_t game_status = { 0 };
 
@@ -50,6 +51,7 @@ void open_DFS(int x, int y);
 #define ARROW_LEFT 0x4B
 #define ARROW_RIGHT 0x4D
 
+#define KEY_R 0x13
 #define KEY_X 0x2D
 #define KEY_C 0x2E
 #define KEY_B 0x30
@@ -58,6 +60,9 @@ static void keyboard_handle(registers_t regs) {
   unsigned char scancode = port_byte_in(0x60);
   
   move_cursor(scancode);
+
+  if (scancode == KEY_R) // restart
+    init_menu();
 
   if (scancode == KEY_X) // mark
     mark();
@@ -254,6 +259,7 @@ void open_near(int x, int y) {
       nx = x + dx[i];
       ny = y + dy[i];
       if (nx < 0 || nx >= (int) game_status.w || ny < 0 || ny >= (int) game_status.h) continue;
+      if (pane[ny][nx].is_bomb) continue; // gameover
       if (pane[ny][nx].is_open) continue;
       if (pane[ny][nx].is_marked) continue;
       if (!pane[ny][nx].is_bomb && pane[ny][nx].bomb_cnt == 0) open_DFS(nx, ny);
