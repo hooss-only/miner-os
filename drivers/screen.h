@@ -5,6 +5,7 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
+#define RED 4
 #define LIGHT_GRAY 7
 #define LIGHT_YELLOW 14
 #define WHITE 15
