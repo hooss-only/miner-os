@@ -12,6 +12,7 @@
 
 #include "cell.h"
 #include "drawing.h"
+#include "logger.h"
 
 game_status_t game_status = { 0 };
 
@@ -49,6 +50,7 @@ void open_DFS(int x, int y);
 
 #define KEY_X 0x2D
 #define KEY_C 0x2E
+#define KEY_B 0x30
 
 static void keyboard_handle(registers_t regs) {
   unsigned char scancode = port_byte_in(0x60);
@@ -60,6 +62,9 @@ static void keyboard_handle(registers_t regs) {
 
   if (scancode == KEY_C) // open
     open(game_status.sel_x, game_status.sel_y);
+
+  if (scancode == KEY_B) // toogle_debug_log;
+    toggle_log();
   
   draw_game();
 }
@@ -73,7 +78,14 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
 
   init_pane();
 
+  init_logger();
+
   draw_game();
+
+  // LOGGER TEST
+  append_log("NORMAL TEST", LOG_NORMAL);
+  append_log("WARNING TEST", LOG_WARNING);
+  append_log("ERROR TEST", LOG_ERROR);
 
   register_interrupt_handler(IRQ1, keyboard_handle);
 }
@@ -98,6 +110,8 @@ void init_pane() {
 void install_bombs() {
   stack_point_init(&s);
   int x, y;
+
+  // generate unique positions for mines
   while (s.length < (int) game_status.mines) {
     char same_pos = 0;
     x = randint(0, game_status.w-1);
@@ -112,7 +126,8 @@ void install_bombs() {
     if (same_pos) continue;
     stack_point_push(&s, x, y);
   }
-
+  
+  // install bomb
   while (s.length) {
     stack_point_pop(&s, &x, &y);
     pane[y][x].is_bomb = 1;
@@ -135,6 +150,8 @@ void draw_game() {
   draw_ui();
   
   draw_cursor();
+
+  draw_log();
 }
 
 void move_cursor(unsigned char scancode) {
