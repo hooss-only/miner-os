@@ -73,19 +73,16 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   game_status.w = w;
   game_status.h = h;
   game_status.mines = mines;
+
+  init_logger();
   
   set_random_seed(get_tick());
 
   init_pane();
 
-  init_logger();
-
   draw_game();
 
-  // LOGGER TEST
-  append_log("NORMAL TEST", LOG_NORMAL);
-  append_log("WARNING TEST", LOG_WARNING);
-  append_log("ERROR TEST", LOG_ERROR);
+  append_log("WELCOME TO DEBUG LOGGER", LOG_NORMAL);
 
   register_interrupt_handler(IRQ1, keyboard_handle);
 }
@@ -106,7 +103,6 @@ void init_pane() {
 
 }
 
-// TODO: Fix bomb is not enough
 void install_bombs() {
   stack_point_init(&s);
   int x, y;
@@ -126,7 +122,6 @@ void install_bombs() {
     if (same_pos) continue;
     stack_point_push(&s, x, y);
   }
-  
   // install bomb
   while (s.length) {
     stack_point_pop(&s, &x, &y);
