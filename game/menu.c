@@ -24,16 +24,16 @@ const struct menu MENU[MENU_LENGTH] = {
     .mines = 10
   },
   {
-    .name = "NORMAL 20 MINES 20X15",
+    .name = "NORMAL 40 MINES 20X15",
     .w = 20,
     .h = 15,
     .mines = 40
   },
   {
-    .name = "HARD 100 MINES 30X15",
+    .name = "HARD 60 MINES 30X15",
     .w = 30,
     .h = 15,
-    .mines = 100
+    .mines = 60
   }
 };
 
