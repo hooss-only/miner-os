@@ -26,7 +26,14 @@ const char FLAG[FLAG_HEIGHT][FLAG_WIDTH] = {
   {WHITE, WHITE, WHITE, WHITE, WHITE, WHITE},
 };
 
+#define BOMB_WIDTH 2
+#define BOMB_HEIGHT 2
+const char BOMB[BOMB_HEIGHT][BOMB_WIDTH] = {
+  0
+};
+
 void draw_flag(int x, int y);
+void draw_bomb(int x, int y);
 
 void draw_pane(cell_t pane[][MAX_WIDTH], game_status_t game_status) {
   for (int i=0; i<(int)game_status.h; i++) {
@@ -56,9 +63,12 @@ void draw_cell_at(int x, int y, cell_t cell) {
   int_to_ascii(cell.bomb_cnt, bomb_cnt_str);
   if (cell.is_open && cell.bomb_cnt != 0)
     put_char_at(x+3, y+2, WHITE, bomb_cnt_str[0]);
-
+  
   if (cell.is_marked && !cell.is_open)
     draw_flag(x+2, y+1);
+
+  if (cell.is_bomb && cell.is_open)
+    draw_bomb(x+2, y+2);
 }
 
 void draw_flag(int x, int y) {
@@ -68,6 +78,10 @@ void draw_flag(int x, int y) {
       put_pixel_at(x+j, y+i, FLAG[i][j]);
     }
   }
+}
+
+void draw_bomb(int x, int y) {
+  put_pixel_at(x, y, RED);
 }
 
 void draw_rect(int x, int y, int w, int h, unsigned char color) {
