@@ -1,6 +1,16 @@
 # MINER OS
 A 32bits operation system which is only designed for minesweeper game.
 
+## How to use
+You can get binary file from release.<br>
+<br>
+What you need to run my project:
+- qemu or qemu-system-i386
+
+```
+qemu-system-i386 -fda miner-os.bin
+```
+
 ## How to build
 What you need to build this project:
 - nasm
