@@ -42,7 +42,6 @@ void draw_ui();
 void move_cursor(unsigned char scancode);
 
 void mark();
-
 void win();
 
 
@@ -101,12 +100,26 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   register_interrupt_handler(IRQ1, keyboard_handle);
 }
 
+void draw_game() {
+  clear_screen(0);
+
+  draw_pane();
+
+  draw_ui();
+  
+  draw_cursor();
+
+  draw_log();
+}
+
 void init_pane() {
   game_status.pane_x = 10;
   game_status.pane_y = 10;
 
   install_bombs();
-
+  
+  // unmark and close cells
+  // count near bombs
   for (int i=0; i<(int)game_status.h; i++) {
     for (int j=0; j<(int)game_status.w; j++) {
       pane[i][j].bomb_cnt = near_bomb_cnt(j, i);
@@ -114,7 +127,6 @@ void init_pane() {
       pane[i][j].is_marked = 0;
     }
   }
-
 }
 
 void install_bombs() {
@@ -142,20 +154,6 @@ void install_bombs() {
     stack_point_pop(&s, &x, &y);
     pane[y][x].is_bomb = 1;
   }
-}
-
-
-
-void draw_game() {
-  clear_screen(0);
-
-  draw_pane(pane, game_status);
-
-  draw_ui();
-  
-  draw_cursor();
-
-  draw_log();
 }
 
 void move_cursor(unsigned char scancode) {

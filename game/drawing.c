@@ -1,4 +1,5 @@
 #include "drawing.h"
+#include "game.h"
 #include "../libc/string.h"
 
 const char CELL[CELL_SIZE][CELL_SIZE] = {
@@ -35,7 +36,7 @@ const char BOMB[BOMB_HEIGHT][BOMB_WIDTH] = {
 void draw_flag(int x, int y);
 void draw_bomb(int x, int y);
 
-void draw_pane(cell_t pane[][MAX_WIDTH], game_status_t game_status) {
+void draw_pane() {
   for (int i=0; i<(int)game_status.h; i++) {
     for (int j=0; j<(int)game_status.w; j++) {
       draw_cell_at(
