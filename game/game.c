@@ -278,11 +278,11 @@ void open(int x, int y) {
 IF marks == mines and every mines marked
 */
 void check_win() {
-  if (marks != game_status.mines) return;
+  if (marks != (int) game_status.mines) return;
   
   char r = 0;
-  for (int i=0; i<game_status.h; i++) {
-    for (int j=0; j<game_status.w; j++) {
+  for (int i=0; i<(int) game_status.h; i++) {
+    for (int j=0; j<(int) game_status.w; j++) {
       if (!pane[i][j].is_bomb) continue;
       if (!pane[i][j].is_marked) { r = 1; break; }
     }
@@ -298,8 +298,8 @@ void win() {
   pause = 1;
   status = WIN;
 
-  for (int i=0; i<game_status.h; i++) {
-    for (int j=0; j<game_status.w; j++) {
+  for (int i=0; i<(int) game_status.h; i++) {
+    for (int j=0; j<(int) game_status.w; j++) {
       if (pane[i][j].is_marked) continue;
       pane[i][j].is_open = 1;
     }
