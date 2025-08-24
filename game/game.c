@@ -27,6 +27,15 @@ const int dy[] = {1, -1, 1, -1, 0, 1, -1, 0};
 
 int marks = 0;
 
+char pause = 0;
+
+typedef enum {
+  RUNNING,
+  WIN,
+  GAMEOVER,
+} status_t;
+status_t status = RUNNING;
+
 void init_pane();
 void install_bombs();
 
@@ -40,6 +49,11 @@ void move_cursor(unsigned char scancode);
 
 void open(int x, int y);
 void mark();
+
+void check_win();
+void gameover();
+void win();
+
 unsigned int near_bomb_cnt(int x, int y);
 unsigned int near_mark_cnt(int x, int y);
 
@@ -64,6 +78,8 @@ static void keyboard_handle(registers_t regs) {
   if (scancode == KEY_R) // restart
     init_menu();
 
+  if (pause) return;
+
   if (scancode == KEY_X) // mark
     mark();
 
@@ -81,6 +97,8 @@ void init_game(unsigned int w, unsigned int h, unsigned int mines) {
   game_status.h = h;
   game_status.mines = mines;
   marks = 0;
+  pause = 0;
+  status = RUNNING;
 
   init_logger();
   
@@ -158,6 +176,7 @@ void draw_game() {
 }
 
 void move_cursor(unsigned char scancode) {
+  if (pause) return;
   switch (scancode) {
     case ARROW_UP: game_status.sel_y--; break;
     case ARROW_DOWN: game_status.sel_y++; break;
@@ -186,6 +205,7 @@ void draw_ui() {
   int anchor_y = game_status.pane_y + MAX_HEIGHT*CELL_SIZE + 5;
 
   char bomb_amount[10] = { 0 };
+  char color = WHITE;
   
   int_to_ascii(game_status.mines, bomb_amount);
   put_string_at(
@@ -194,11 +214,12 @@ void draw_ui() {
       WHITE,
       "ARROWS TO MOVE   X TO MARK   C TO OPEN"
   );
-
+  
+  if (pause) color = LIGHT_YELLOW;
   put_string_at(
       anchor_x,
       anchor_y + 1 * (FONT_HEIGHT + 2),
-      WHITE,
+      color,
       "R TO RESTART"
   );
 
@@ -235,6 +256,8 @@ void mark() {
   cell->is_marked = !cell->is_marked;
   if (cell->is_marked) marks++;
   else marks--;
+
+  check_win();
 }
 
 void open(int x, int y) {
@@ -247,6 +270,40 @@ void open(int x, int y) {
   if (cell->bomb_cnt == 0 && !cell->is_open) open_DFS(x, y);
 
   cell->is_open = 1;
+  
+  check_win();
+}
+
+/* 
+IF marks == mines and every mines marked
+*/
+void check_win() {
+  if (marks != game_status.mines) return;
+  
+  char r = 0;
+  for (int i=0; i<game_status.h; i++) {
+    for (int j=0; j<game_status.w; j++) {
+      if (!pane[i][j].is_bomb) continue;
+      if (!pane[i][j].is_marked) { r = 1; break; }
+    }
+  }
+
+  if (!r) win();
+}
+
+/*
+Open cells that is not marked
+*/
+void win() {
+  pause = 1;
+  status = WIN;
+
+  for (int i=0; i<game_status.h; i++) {
+    for (int j=0; j<game_status.w; j++) {
+      if (pane[i][j].is_marked) continue;
+      pane[i][j].is_open = 1;
+    }
+  }
 }
 
 // TODO: game over when near is bomb
