@@ -19,9 +19,8 @@ typedef struct {
 extern game_status_t game_status;
 extern cell_t pane[MAX_HEIGHT][MAX_WIDTH];
 
-extern const int dx[8];
-extern const int dy[8];
-
 void init_game(unsigned int w, unsigned int h, unsigned int mines);
+void check_win();
+void gameover();
 
 #endif
