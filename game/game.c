@@ -86,8 +86,10 @@ static void keyboard_handle(registers_t regs) {
   if (scancode == KEY_C) // open
     open(game_status.sel_x, game_status.sel_y);
 
-  if (scancode == KEY_B) // toogle_debug_log;
+  if (scancode == KEY_B) { // toogle_debug_log
+    pause = !pause; // toggle pause
     toggle_log();
+  }
   
   draw_game();
 }
